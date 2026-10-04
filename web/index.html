@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Server Manager</title>
+<link rel="stylesheet" href="/css/style.css?v=2" />
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="dot" id="conn"></span>
+    <h1 id="server-name">server</h1>
+    <span class="sub" id="host-line">loading…</span>
+  </div>
+  <div class="actions">
+    <span class="stamp" id="stamp">—</span>
+    <button id="refresh" type="button">refresh</button>
+  </div>
+</header>
+
+<div class="banner hidden" id="token-banner">
+  <strong>Token required.</strong> Paste it once and it is kept in this browser.
+  <input id="token-input" type="password" placeholder="SM_TOKEN" />
+  <button id="token-save" type="button">save</button>
+</div>
+
+<div class="shell">
+  <nav class="side" id="nav" aria-label="views">
+    <button class="nav-item" type="button" data-view="overview">
+      <span>Overview</span><span class="count" id="nav-overview"></span>
+    </button>
+    <button class="nav-item" type="button" data-view="ports">
+      <span>Ports</span><span class="count" id="nav-ports"></span>
+    </button>
+    <button class="nav-item" type="button" data-view="docker">
+      <span>Docker</span><span class="count" id="nav-docker"></span>
+    </button>
+    <button class="nav-item" type="button" data-view="programs">
+      <span>Other programs</span><span class="count" id="nav-programs"></span>
+    </button>
+    <button class="nav-item" type="button" data-view="processes">
+      <span>Processes</span><span class="count" id="nav-processes"></span>
+    </button>
+  </nav>
+
+  <main>
+    <section class="view" id="view-overview">
+      <section class="kpis" id="kpis"></section>
+    </section>
+
+    <section class="view hidden" id="view-ports">
+      <section class="panel" id="panel-ports">
+        <div class="panel-head">
+          <h2>Ports</h2>
+          <span class="hint" id="ports-hint">what is listening and what it is bound to</span>
+        </div>
+        <div id="ports-body" class="body"></div>
+      </section>
+    </section>
+
+    <section class="view hidden" id="view-docker">
+      <section class="panel" id="panel-docker">
+        <div class="panel-head">
+          <h2>Docker</h2>
+          <span class="hint" id="docker-hint">containers</span>
+        </div>
+        <div id="docker-body" class="body"></div>
+      </section>
+    </section>
+
+    <section class="view hidden" id="view-programs">
+      <section class="panel" id="panel-services">
+        <div class="panel-head">
+          <h2>Other programs</h2>
+          <span class="hint" id="services-hint">not in Docker</span>
+        </div>
+        <div id="services-body" class="body"></div>
+      </section>
+    </section>
+
+    <section class="view hidden" id="view-processes">
+      <section class="panel" id="panel-processes">
+        <div class="panel-head">
+          <h2>Processes</h2>
+          <span class="hint" id="processes-hint">top by CPU, then memory</span>
+        </div>
+        <div id="processes-body" class="body"></div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <span id="footer-note">read-only panel · bound to 127.0.0.1 · Roans Server Manager</span>
+</footer>
+
+<script src="/js/app.js?v=2"></script>
+</body>
+</html>

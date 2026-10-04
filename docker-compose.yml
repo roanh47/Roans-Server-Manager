@@ -1,0 +1,56 @@
+# Roans Server Manager - one panel, bound to loopback only.
+#
+#   docker compose up -d --build     # build and start
+#   docker compose logs -f           # follow
+#   docker compose down              # stop
+#
+# network_mode/pid/uts are all "host" so the panel describes THE SERVER and not
+# the container: a bridged container's /proc knows nothing about host processes,
+# and its network namespace would list the wrong sockets. That removes the
+# container boundary, which makes the uvicorn --host 127.0.0.1 bind the only
+# thing keeping this off the LAN. Do not change it. See AGENTS.md.
+
+services:
+  panel:
+    build: .
+    image: roans-server-manager:latest
+    container_name: roans-server-manager
+    network_mode: host
+    pid: host
+    uts: host
+    # Socket -> process attribution reads /proc/<pid>/fd, and two separate gates
+    # decide whether that works. Measured on this host, counting readable socket
+    # fds: Docker's AppArmor profile = 425, unconfined without the capability =
+    # 49, both = 1834. So both, and the honest trade-off: this container is no
+    # longer AppArmor-confined. It already holds the Docker socket, which is
+    # root-equivalent on its own, and it listens on loopback only.
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor=unconfined
+    command:
+      - uvicorn
+      - servermanager.web.app:app
+      - --host
+      - 127.0.0.1
+      - --port
+      - "8303"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      # The host tree, read-only, so disk usage is read from the host's own
+      # mount table instead of this container's overlay. Read-only is the
+      # point: nothing in this program ever writes to the server.
+      - /:/host/root:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./web:/app/web:ro          # frontend edits: reload the browser, no rebuild
+    environment:
+      SM_HOST_PROC: /host/proc
+      SM_HOST_SYS: /host/sys
+      SM_HOST_ROOT: /host/root
+      SM_DOCKER_SOCKET: /var/run/docker.sock
+      SM_PORT: "8303"
+    env_file:
+      - path: .env
+        required: false
+    restart: unless-stopped

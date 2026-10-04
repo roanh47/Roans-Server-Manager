@@ -65,6 +65,16 @@ The bind address is the ground truth, so `classify_binding()` maps it:
 in", which is the honest phrasing — the panel cannot see the router and does not
 pretend to.
 
+## Views
+
+The page has a left sidebar with one entry per view - Overview, Ports, Docker,
+Other programs, Processes - and shows a single view at a time. The choice lives
+in the URL hash and in localStorage, so `#ports` opens on ports and a refresh
+stays where it was. Every view is drawn from the same `/api/overview` payload,
+which makes switching a class change: no second endpoint, no request per switch,
+and no empty panel while something loads. The sidebar carries the live counts
+from that same payload, so the number is readable without opening the view.
+
 ## Files
 
 ```
@@ -72,7 +82,10 @@ servermanager/
   config.py               environment -> Settings, nothing else
   collectors/             read-only data sources (no web imports)
   web/app.py              routes, token guard, static mount
-web/                      one page: index.html, css, js
+web/
+  index.html              shell: sidebar plus one section per view
+  js/app.js               the poll, the render, the view switch
+  css/style.css           sidebar, panels, mobile fallback
 docs/                     this file, BACKLOG.md, AGENTS.md at root
 tests/                    unit tests plus live smoke tests
 ```

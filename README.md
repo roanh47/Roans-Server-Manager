@@ -16,6 +16,10 @@ Built for a single server and a single user. Read-only by default, bound to
 | Ports | every listening port and **what it is bound to** (localhost / LAN / Tailscale / public) | `/proc/net/tcp*`, `/proc/<pid>/cgroup` |
 | Services | non-Docker programs, resolved to their systemd unit | `/proc/<pid>/cgroup` |
 
+The panel shows one of these at a time, picked from a left sidebar: Overview
+(system), Ports, Docker, Other programs (the services above) and Processes. Each
+entry carries its live count, taken from the same poll that draws the page.
+
 The port view is the point of the thing: the interesting question is never
 "which port is open", it is "which port is open to the world".
 
